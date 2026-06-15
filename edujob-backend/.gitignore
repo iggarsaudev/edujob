@@ -1,0 +1,39 @@
+# dependencias y builds de maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# variables de entorno y secretos (12-factor app)
+.env
+.env.*
+!.env.example
+
+# configuraciones de ides (intellij, eclipse, vscode)
+.idea/
+*.iml
+*.iws
+.project
+.classpath
+.settings/
+.vscode/
+.factorypath
+
+# logs de la aplicación
+*.log
+logs/
+
+# archivos del sistema operativo
+.ds_store
+thumbs.db
+desktop.ini
+
+# docker 
+.docker/
+docker-compose.override.yml

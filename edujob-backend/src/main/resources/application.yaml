@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: edujob-backend
+
+  # conexión a base de datos usando variables de entorno
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  # configuración de hibernate/jpa
+  jpa:
+    hibernate:
+      ddl-auto: update # generará las tablas automáticamente al arrancar
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # conexión a redis
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+# configuración personalizada para jwt
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXPIRATION_MS}
