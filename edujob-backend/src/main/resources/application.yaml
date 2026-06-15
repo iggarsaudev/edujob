@@ -1,6 +1,11 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: edujob-backend
+  config:
+    import: optional:file:.env[.properties]
 
   # conexión a base de datos usando variables de entorno
   datasource:
