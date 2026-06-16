@@ -6,6 +6,17 @@ spring:
     name: edujob-backend
   config:
     import: optional:file:.env[.properties]
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   # conexión a base de datos usando variables de entorno
   datasource:
@@ -35,3 +46,5 @@ app:
   jwt:
     secret: ${JWT_SECRET}
     expiration-ms: ${JWT_EXPIRATION_MS}
+  portfolio:
+    demo-mode: ${DEMO_MODE:false} # Por defecto será false si no se define
