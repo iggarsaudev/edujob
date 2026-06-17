@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+import com.edujob.backend.config.PageResponse;
+
 @RestController
 @RequestMapping("/api/v1/courses")
 @Tag(name = "Cursos", description = "Endpoints para la gestión y matriculación de cursos")
@@ -34,15 +36,22 @@ public class CourseController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar todos los cursos", description = "Devuelve el catálogo completo de cursos disponibles.")
-    public ResponseEntity<List<CourseResponse>> getAllCourses() {
-        return ResponseEntity.ok(courseService.getAllCourses());
+    @Operation(summary = "Listar todos los cursos", description = "Devuelve el catálogo completo de cursos disponibles (paginado).")
+    public ResponseEntity<PageResponse<CourseResponse>> getAllCourses(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(courseService.getAllCourses(page, size));
     }
 
     @GetMapping("/me")
-    @Operation(summary = "Mis cursos", description = "Si eres profesor, devuelve los cursos que impartes. Si eres alumno, los cursos donde estás matriculado.")
-    public ResponseEntity<List<CourseResponse>> getMyCourses(Authentication authentication) {
-        return ResponseEntity.ok(courseService.getMyCourses(authentication.getName()));
+    @Operation(summary = "Mis cursos", description = "Cursos que impartes o donde estás matriculado (paginado).")
+    public ResponseEntity<PageResponse<CourseResponse>> getMyCourses(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(courseService.getMyCourses(authentication.getName(), page, size));
     }
 
     @PostMapping("/{id}/enroll")

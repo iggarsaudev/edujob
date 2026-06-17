@@ -1,5 +1,6 @@
 package com.edujob.backend.offers.infrastructure;
 
+import com.edujob.backend.config.PageResponse;
 import com.edujob.backend.offers.application.JobOfferRequest;
 import com.edujob.backend.offers.application.JobOfferResponse;
 import com.edujob.backend.offers.application.JobOfferService;
@@ -11,13 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/offers")
 @Tag(name = "Ofertas de Empleo", description = "Endpoints para gestionar las ofertas de trabajo")
-@SecurityRequirement(name = "bearerAuth") // Exige el candado de Swagger
+@SecurityRequirement(name = "bearerAuth")
 public class JobOfferController {
 
     private final JobOfferService offerService;
@@ -29,21 +29,27 @@ public class JobOfferController {
     @PostMapping
     @Operation(summary = "Crear una oferta", description = "Crea una nueva oferta de trabajo a nombre del usuario autenticado.")
     public ResponseEntity<JobOfferResponse> createOffer(@RequestBody JobOfferRequest request, Authentication authentication) {
-        // authentication.getName() saca el DNI del Token JWT automáticamente
         JobOfferResponse response = offerService.createOffer(request, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    @Operation(summary = "Listar ofertas abiertas", description = "Devuelve todas las ofertas con estado OPEN ordenadas por la más reciente.")
-    public ResponseEntity<List<JobOfferResponse>> getAllOpenOffers() {
-        return ResponseEntity.ok(offerService.getAllOpenOffers());
+    @Operation(summary = "Listar ofertas abiertas", description = "Devuelve las ofertas paginadas (por defecto 10 por página).")
+    public ResponseEntity<PageResponse<JobOfferResponse>> getAllOpenOffers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(offerService.getAllOpenOffers(page, size));
     }
 
     @GetMapping("/me")
-    @Operation(summary = "Mis ofertas", description = "Devuelve todas las ofertas (abiertas y cerradas) creadas por el usuario autenticado.")
-    public ResponseEntity<List<JobOfferResponse>> getMyOffers(Authentication authentication) {
-        return ResponseEntity.ok(offerService.getMyOffers(authentication.getName()));
+    @Operation(summary = "Mis ofertas", description = "Devuelve mis ofertas paginadas.")
+    public ResponseEntity<PageResponse<JobOfferResponse>> getMyOffers(
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(offerService.getMyOffers(authentication.getName(), page, size));
     }
 
     @PatchMapping("/{id}/close")

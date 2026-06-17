@@ -11,6 +11,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import com.edujob.backend.config.PageResponse;
+
 @Service
 public class JobOfferService {
 
@@ -40,23 +45,47 @@ public class JobOfferService {
         return mapToResponse(savedOffer);
     }
 
-    // 2. Ver todas las ofertas ABIERTAS (para el tablón público)
-    public List<JobOfferResponse> getAllOpenOffers() {
-        return offerRepository.findByStatusOrderByCreatedAtDesc(OfferStatus.OPEN)
+    // 2. Ver todas las ofertas ABIERTAS (Paginadas)
+    public PageResponse<JobOfferResponse> getAllOpenOffers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<JobOffer> offersPage = offerRepository.findByStatusOrderByCreatedAtDesc(OfferStatus.OPEN, pageable);
+
+        List<JobOfferResponse> content = offersPage.getContent()
                 .stream()
                 .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .toList(); // Usamos .toList() nativo de Java 16+ en vez de Collectors
+
+        return new PageResponse<>(
+                content,
+                offersPage.getNumber(),
+                offersPage.getSize(),
+                offersPage.getTotalElements(),
+                offersPage.getTotalPages(),
+                offersPage.isLast()
+        );
     }
 
-    // 3. Ver mis propias ofertas
-    public List<JobOfferResponse> getMyOffers(String authorDni) {
+    // 3. Ver mis propias ofertas (Paginadas)
+    public PageResponse<JobOfferResponse> getMyOffers(String authorDni, int page, int size) {
         User author = userRepository.findByDni(authorDni)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        return offerRepository.findByAuthorIdOrderByCreatedAtDesc(author.getId())
+        Pageable pageable = PageRequest.of(page, size);
+        Page<JobOffer> offersPage = offerRepository.findByAuthorIdOrderByCreatedAtDesc(author.getId(), pageable);
+
+        List<JobOfferResponse> content = offersPage.getContent()
                 .stream()
                 .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .toList();
+
+        return new PageResponse<>(
+                content,
+                offersPage.getNumber(),
+                offersPage.getSize(),
+                offersPage.getTotalElements(),
+                offersPage.getTotalPages(),
+                offersPage.isLast()
+        );
     }
 
     // 4. Cerrar una oferta (Ej: ya he contratado a alguien)

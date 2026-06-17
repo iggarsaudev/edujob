@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import com.edujob.backend.config.PageResponse;
+
 @Service
 public class CourseService {
 
@@ -41,27 +46,54 @@ public class CourseService {
         return mapToResponse(courseRepository.save(course));
     }
 
-    // 2. Ver todos los cursos
-    public List<CourseResponse> getAllCourses() {
-        return courseRepository.findAll()
+    // 2. Ver todos los cursos (Paginados)
+    public PageResponse<CourseResponse> getAllCourses(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        // JpaRepository ya nos da findAll(Pageable) gratis
+        Page<Course> coursesPage = courseRepository.findAll(pageable);
+
+        List<CourseResponse> content = coursesPage.getContent()
                 .stream()
                 .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .toList();
+
+        return new PageResponse<>(
+                content,
+                coursesPage.getNumber(),
+                coursesPage.getSize(),
+                coursesPage.getTotalElements(),
+                coursesPage.getTotalPages(),
+                coursesPage.isLast()
+        );
     }
 
-    // 3. Ver MIS cursos (Lógica doble: si soy profe enseño los que dicto, si soy alumno los que estudio)
-    public List<CourseResponse> getMyCourses(String dni) {
+    // 3. Ver MIS cursos (Paginados)
+    public PageResponse<CourseResponse> getMyCourses(String dni, int page, int size) {
         User user = userRepository.findByDni(dni)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        List<Course> courses;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Course> coursesPage;
+
         if (user.getRole() == Role.TEACHER) {
-            courses = courseRepository.findByTeacherIdOrderByCreatedAtDesc(user.getId());
+            coursesPage = courseRepository.findByTeacherIdOrderByCreatedAtDesc(user.getId(), pageable);
         } else {
-            courses = courseRepository.findByEnrolledStudents_IdOrderByCreatedAtDesc(user.getId());
+            coursesPage = courseRepository.findByEnrolledStudents_IdOrderByCreatedAtDesc(user.getId(), pageable);
         }
 
-        return courses.stream().map(this::mapToResponse).collect(Collectors.toList());
+        List<CourseResponse> content = coursesPage.getContent()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+
+        return new PageResponse<>(
+                content,
+                coursesPage.getNumber(),
+                coursesPage.getSize(),
+                coursesPage.getTotalElements(),
+                coursesPage.getTotalPages(),
+                coursesPage.isLast()
+        );
     }
 
     // 4. Matricular a un alumno
