@@ -1,0 +1,51 @@
+<div class="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+  <div
+    class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border-t-4 border-edu-blue"
+  >
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-extrabold text-gray-800">Bienvenido de nuevo</h2>
+      <p class="text-gray-500 mt-2 text-sm">
+        Accede a tu panel de control EduJob
+      </p>
+    </div>
+
+    <form class="space-y-6">
+      <div>
+        <label for="dni" class="block text-sm font-semibold text-gray-700"
+          >DNI / Documento</label
+        >
+        <input
+          type="text"
+          id="dni"
+          class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-edu-blue focus:border-edu-blue outline-none transition-all"
+          placeholder="Ej: 11111111A"
+        />
+      </div>
+
+      <div>
+        <label for="pin" class="block text-sm font-semibold text-gray-700"
+          >PIN de Acceso</label
+        >
+        <input
+          type="password"
+          id="pin"
+          class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-edu-blue focus:border-edu-blue outline-none transition-all"
+          placeholder="****"
+        />
+      </div>
+
+      <div class="flex items-center justify-between">
+        <a href="#" class="text-sm font-medium text-edu-blue hover:underline"
+          >¿Olvidaste tu PIN?</a
+        >
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-edu-blue text-white py-3 px-4 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold text-lg transition-colors shadow-md"
+      >
+        Entrar al Sistema
+      </button>
+    </form>
+  </div>
+</div>
