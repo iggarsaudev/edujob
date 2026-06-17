@@ -10,8 +10,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/v1/auth")
+@Tag(name = "Autenticación", description = "Endpoints para inicio de sesión y recuperación de PIN")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -25,6 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login del usuario", description = "Devuelve el token del usuario logado")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.dni(), request.pin())
