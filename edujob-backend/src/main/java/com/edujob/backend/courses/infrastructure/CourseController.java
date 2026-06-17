@@ -16,6 +16,8 @@ import java.util.UUID;
 
 import com.edujob.backend.config.PageResponse;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/courses")
 @Tag(name = "Cursos", description = "Endpoints para la gestión y matriculación de cursos")
@@ -30,7 +32,10 @@ public class CourseController {
 
     @PostMapping
     @Operation(summary = "Crear curso", description = "Crea un curso nuevo. El usuario autenticado debe tener rol TEACHER o ADMIN.")
-    public ResponseEntity<CourseResponse> createCourse(@RequestBody CourseRequest request, Authentication authentication) {
+    public ResponseEntity<CourseResponse> createCourse(
+            @Valid @RequestBody CourseRequest request,
+            Authentication authentication
+    ) {
         CourseResponse response = courseService.createCourse(request, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
