@@ -9,7 +9,14 @@
       </p>
     </div>
 
-    <form class="space-y-6">
+    <div
+      *ngIf="errorMessage"
+      class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm text-center font-medium"
+    >
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
       <div>
         <label for="dni" class="block text-sm font-semibold text-gray-700"
           >DNI / Documento</label
@@ -17,6 +24,7 @@
         <input
           type="text"
           id="dni"
+          formControlName="dni"
           class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-edu-blue focus:border-edu-blue outline-none transition-all"
           placeholder="Ej: 11111111A"
         />
@@ -29,6 +37,7 @@
         <input
           type="password"
           id="pin"
+          formControlName="pin"
           class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-edu-blue focus:border-edu-blue outline-none transition-all"
           placeholder="****"
         />
@@ -42,7 +51,8 @@
 
       <button
         type="submit"
-        class="w-full bg-edu-blue text-white py-3 px-4 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold text-lg transition-colors shadow-md"
+        [disabled]="loginForm.invalid"
+        class="w-full bg-edu-blue text-white py-3 px-4 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold text-lg transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Entrar al Sistema
       </button>
