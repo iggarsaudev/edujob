@@ -1,4 +1,66 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div
+    class="mb-10 p-6 bg-white rounded-xl border-l-4 border-edu-orange shadow-sm flex items-center justify-between"
+  >
+    <ng-container *ngIf="userRole === 'STUDENT' || userRole === 'ROLE_STUDENT'">
+      <div>
+        <h2 class="text-xl font-bold text-gray-800">Mi Espacio Académico</h2>
+        <p class="text-gray-600 mt-1">
+          No olvides registrar tu asistencia de hoy para tus cursos
+          presenciales.
+        </p>
+      </div>
+      <button
+        class="bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition-colors shadow-md flex items-center"
+      >
+        <svg
+          class="w-5 h-5 mr-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        Fichar Entrada
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="userRole === 'TEACHER' || userRole === 'ROLE_TEACHER'">
+      <div>
+        <h2 class="text-xl font-bold text-gray-800">Panel Docente</h2>
+        <p class="text-gray-600 mt-1">
+          Revisa la asistencia en tiempo real y gestiona tus actas de
+          evaluación.
+        </p>
+      </div>
+      <button
+        class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-md"
+      >
+        Control de Aula
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="userRole === 'ROLE_ADMIN' || userRole === 'ADMIN'">
+      <div>
+        <h2 class="text-xl font-bold text-gray-800">
+          Centro de Mando Administrativo
+        </h2>
+        <p class="text-gray-600 mt-1">
+          Gestiona usuarios, audita registros y configura el sistema global.
+        </p>
+      </div>
+      <button
+        class="bg-purple-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-purple-700 transition-colors shadow-md"
+      >
+        Ajustes del Sistema
+      </button>
+    </ng-container>
+  </div>
   <div class="flex justify-between items-center mb-8">
     <div>
       <h1 class="text-3xl font-bold text-edu-blue">Tablón de Ofertas</h1>

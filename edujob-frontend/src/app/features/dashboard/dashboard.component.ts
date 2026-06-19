@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OfferService } from '../../core/services/offer.service';
+import { AuthService } from '../../core/services/auth.service';
 import { JobOffer } from '../../core/models/job-offer.model';
 import { PageResponse } from '../../core/models/page-response.model';
 
@@ -12,20 +13,23 @@ import { PageResponse } from '../../core/models/page-response.model';
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit {
-  // Aquí guardaremos las ofertas que lleguen del Backend
   offers: JobOffer[] = [];
+  userRole: string | null = null; // Creamos la variable para guardar el rol
 
-  constructor(private offerService: OfferService) {}
+  constructor(
+    private offerService: OfferService,
+    private authService: AuthService,
+  ) {}
 
-  // Este método se ejecuta automáticamente cuando la pantalla carga
   ngOnInit(): void {
     this.loadOffers();
+    this.userRole = this.authService.getUserRole(); // Leemos el rol al entrar
+    // console.log('Rol del usuario logueado:', this.userRole); // Un chivato para la consola
   }
 
   loadOffers(): void {
     this.offerService.getOpenOffers(0, 10).subscribe({
       next: (data: PageResponse<JobOffer>) => {
-        // Extraemos el "content" del sobre paginado y lo guardamos en nuestra variable
         this.offers = data.content;
       },
       error: (err) => {
@@ -34,14 +38,12 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // Diccionario de traducción de estados
   translateStatus(status: string): string {
     const statusMap: { [key: string]: string } = {
       OPEN: 'ABIERTA',
       CLOSED: 'CERRADA',
       IN_PROGRESS: 'EN PROCESO',
     };
-    // Si encuentra la traducción la devuelve, si no, devuelve el original
     return statusMap[status] || status;
   }
 }

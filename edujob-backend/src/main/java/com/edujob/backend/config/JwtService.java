@@ -13,6 +13,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Function;
 
+import java.util.Map;
+import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 @Service
 public class JwtService {
 
@@ -23,12 +28,23 @@ public class JwtService {
     private long jwtExpiration;
 
     public String generateToken(UserDetails userDetails) {
+        // 1. Creamos un mapa para los datos extra (claims)
+        Map<String, Object> extraClaims = new HashMap<>();
+        
+        // 2. Extraemos el rol del usuario y lo guardamos en la clave "roles"
+        // (Devolvemos un array para que coincida con la lectura estándar de JWT)
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+        extraClaims.put("roles", roles);
+
+        // 3. Generamos el token incluyendo esos claims extra
         return Jwts.builder()
-                .claims(new HashMap<>())
-                .subject(userDetails.getUsername()) // Guardamos el DNI
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(getSignInKey())
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 

@@ -38,7 +38,7 @@ export class LoginComponent {
 
       this.authService.login(dni, pin).subscribe({
         next: (response) => {
-          console.log('¡Login correcto!', response);
+          // console.log('¡Login correcto!', response);
           this.errorMessage = '';
           this.router.navigate(['/dashboard']);
         },
