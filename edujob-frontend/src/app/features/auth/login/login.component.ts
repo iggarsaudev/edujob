@@ -40,7 +40,7 @@ export class LoginComponent {
         next: (response) => {
           console.log('¡Login correcto!', response);
           this.errorMessage = '';
-          this.router.navigate(['/']);
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           console.error(err);
