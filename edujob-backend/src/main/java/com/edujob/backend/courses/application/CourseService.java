@@ -127,4 +127,10 @@ public class CourseService {
                 course.getCreatedAt()
         );
     }
+
+
+    // Método para obtener los cursos en los que el alumno está matriculado
+    public List<Course> getCoursesForStudent(String studentDni) {
+        return courseRepository.findByEnrolledStudentsDni(studentDni);
+    }
 }

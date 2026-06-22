@@ -3,31 +3,79 @@
     class="mb-10 p-6 bg-white rounded-xl border-l-4 border-edu-orange shadow-sm flex items-center justify-between"
   >
     <ng-container *ngIf="userRole === 'STUDENT' || userRole === 'ROLE_STUDENT'">
-      <div>
-        <h2 class="text-xl font-bold text-gray-800">Mi Espacio Académico</h2>
-        <p class="text-gray-600 mt-1">
-          No olvides registrar tu asistencia de hoy para tus cursos
-          presenciales.
+      <div class="w-full">
+        <h2 class="text-xl font-bold text-gray-800 mb-2">
+          Mi Espacio Académico
+        </h2>
+        <p class="text-gray-600 mb-6">
+          Selecciona el curso en el que deseas registrar tu asistencia de hoy.
         </p>
-      </div>
-      <button
-        class="bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition-colors shadow-md flex items-center"
-      >
-        <svg
-          class="w-5 h-5 mr-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            *ngFor="let course of myCourses"
+            class="bg-gray-50 rounded-lg p-5 border border-gray-200 flex flex-col justify-between"
+          >
+            <div>
+              <h3 class="font-bold text-lg text-edu-blue">
+                {{ course.title }}
+              </h3>
+              <p class="text-sm text-gray-500 mt-1 mb-4 line-clamp-2">
+                {{ course.description }}
+              </p>
+            </div>
+
+            <button
+              (click)="registerAttendance(course.id)"
+              class="w-full text-white px-4 py-2 rounded-lg font-bold transition-colors shadow-sm flex items-center justify-center"
+              [ngClass]="
+                course.isCheckedIn
+                  ? 'bg-amber-500 hover:bg-amber-600'
+                  : 'bg-green-600 hover:bg-green-700'
+              "
+            >
+              <svg
+                *ngIf="!course.isCheckedIn"
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                ></path>
+              </svg>
+
+              <svg
+                *ngIf="course.isCheckedIn"
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                ></path>
+              </svg>
+
+              {{ course.isCheckedIn ? "Fichar Salida" : "Fichar Entrada" }}
+            </button>
+          </div>
+        </div>
+
+        <div
+          *ngIf="myCourses.length === 0"
+          class="text-sm text-amber-600 bg-amber-50 p-4 rounded-md border border-amber-200 mt-4"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-          ></path>
-        </svg>
-        Fichar Entrada
-      </button>
+          Actualmente no estás matriculado en ningún curso activo.
+        </div>
+      </div>
     </ng-container>
 
     <ng-container *ngIf="userRole === 'TEACHER' || userRole === 'ROLE_TEACHER'">
@@ -61,6 +109,7 @@
       </button>
     </ng-container>
   </div>
+
   <div class="flex justify-between items-center mb-8">
     <div>
       <h1 class="text-3xl font-bold text-edu-blue">Tablón de Ofertas</h1>
@@ -187,5 +236,41 @@
     <p class="text-gray-500 mt-1">
       Actualmente no hay ninguna oferta de empleo abierta en la plataforma.
     </p>
+  </div>
+
+  <div
+    *ngIf="toastMessage"
+    class="fixed bottom-8 right-8 px-6 py-4 rounded-lg shadow-xl text-white font-bold transition-all duration-300 transform translate-y-0 flex items-center z-50"
+    [ngClass]="toastType === 'success' ? 'bg-green-600' : 'bg-red-600'"
+  >
+    <svg
+      *ngIf="toastType === 'success'"
+      class="w-6 h-6 mr-2"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M5 13l4 4L19 7"
+      ></path>
+    </svg>
+    <svg
+      *ngIf="toastType === 'error'"
+      class="w-6 h-6 mr-2"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      ></path>
+    </svg>
+    {{ toastMessage }}
   </div>
 </div>

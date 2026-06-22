@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "courses")
@@ -31,6 +32,7 @@ public class Course {
     // Relación MUCHOS a UNO (Muchos cursos los puede impartir un solo profesor)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", nullable = false)
+    @JsonIgnore
     private User teacher;
 
     // Relación MUCHOS a MUCHOS (Un curso tiene muchos alumnos, un alumno tiene muchos cursos)
@@ -41,6 +43,7 @@ public class Course {
             inverseJoinColumns = @JoinColumn(name = "student_id") // Columna para el Alumno
     )
     @Builder.Default // Usamos esto para que Lombok inicialice el Set vacío correctamente
+    @JsonIgnore
     private Set<User> enrolledStudents = new HashSet<>();
 
     @Column(name = "created_at", updatable = false)

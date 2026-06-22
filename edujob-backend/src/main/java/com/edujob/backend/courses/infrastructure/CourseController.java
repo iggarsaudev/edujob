@@ -10,13 +10,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.UUID;
-
 import com.edujob.backend.config.PageResponse;
-
 import jakarta.validation.Valid;
+import java.util.List;
+import com.edujob.backend.courses.domain.Course;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.edujob.backend.courses.application.CourseDTO;
+import com.edujob.backend.attendance.application.AttendanceService;
 
 @RestController
 @RequestMapping("/api/v1/courses")
@@ -25,9 +28,11 @@ import jakarta.validation.Valid;
 public class CourseController {
 
     private final CourseService courseService;
+    private final AttendanceService attendanceService;
 
-    public CourseController(CourseService courseService) {
+    public CourseController(CourseService courseService, AttendanceService attendanceService) {
         this.courseService = courseService;
+        this.attendanceService = attendanceService;
     }
 
     @PostMapping
@@ -64,5 +69,23 @@ public class CourseController {
     public ResponseEntity<CourseResponse> enroll(@PathVariable UUID id, Authentication authentication) {
         CourseResponse response = courseService.enrollStudent(id, authentication.getName());
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/my-courses")
+    public ResponseEntity<List<CourseDTO>> getMyCourses() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String studentDni = authentication.getName();
+        
+        List<Course> courses = courseService.getCoursesForStudent(studentDni);
+        
+        // Transformamos y calculamos el estado de cada curso
+        List<CourseDTO> safeCourses = courses.stream()
+                .map(course -> {
+                    boolean isCheckedIn = attendanceService.isStudentCheckedIn(studentDni, course.getId());
+                    return new CourseDTO(course.getId(), course.getTitle(), course.getDescription(), isCheckedIn);
+                })
+                .toList();
+
+        return ResponseEntity.ok(safeCourses);
     }
 }
